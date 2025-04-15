@@ -1,26 +1,33 @@
 {
-  "name": "hyperblobs",
-  "version": "2.8.0",
-  "description": "A blob store for Hypercore",
+  "name": "spaceblobs",
+  "version": "0.0.1",
+  "description": "A blob store for Spacecore",
   "main": "index.js",
   "scripts": {
     "test": "standard && brittle test/*.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/holepunchto/hyperblobs.git"
+    "url": "git+https://github.com/samooth/spaceblobs.git"
   },
   "keywords": [
-    "hypercore",
+    "spacecore",
     "blob",
     "store"
   ],
   "author": "Andrew Osheroff <andrewosh@gmail.com>",
+  "contributors": [
+    {
+      "name": "Tomás Díaz",
+      "email": "tomas@bsv.direct",
+      "url": "https://bsv.direct"
+    }
+  ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/holepunchto/hyperblobs/issues"
+    "url": "https://github.com/samooth/spaceblobs/issues"
   },
-  "homepage": "https://github.com/holepunchto/hyperblobs#readme",
+  "homepage": "https://github.com/samooth/spaceblobs#readme",
   "files": [
     "index.js",
     "lib/**.js"
@@ -34,14 +41,14 @@
   "dependencies": {
     "b4a": "^1.6.1",
     "bare-events": "^2.5.0",
-    "hypercore-errors": "^1.1.1",
+    "spacecore-errors": "^0.0.1",
     "mutexify": "^1.4.0",
     "speedometer": "^1.1.0",
     "streamx": "^2.13.2"
   },
   "devDependencies": {
     "brittle": "^3.1.0",
-    "hypercore": "^10.18.0",
+    "bitspacecore": "^0.0.1",
     "random-access-memory": "^6.0.0",
     "standard": "^17.0.0"
   }

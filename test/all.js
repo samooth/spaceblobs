@@ -1,13 +1,13 @@
 const test = require('brittle')
 const b4a = require('b4a')
-const Hypercore = require('hypercore')
+const Spacecore = require('bitspacecore')
 const RAM = require('random-access-memory')
 
-const Hyperblobs = require('..')
+const Spaceblobs = require('..')
 
 test('can get/put a large blob', async t => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
 
   const buf = b4a.alloc(5 * blobs.blockSize, 'abcdefg')
   const id = await blobs.put(buf)
@@ -17,8 +17,8 @@ test('can get/put a large blob', async t => {
 })
 
 test('can put/get two blobs in one core', async t => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
 
   {
     const buf = b4a.alloc(5 * blobs.blockSize, 'abcdefg')
@@ -38,8 +38,8 @@ test('can put/get two blobs in one core', async t => {
 })
 
 test('can seek to start/length within one blob, one block', async t => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
 
   const buf = b4a.alloc(5 * blobs.blockSize, 'abcdefg')
   const id = await blobs.put(buf)
@@ -49,8 +49,8 @@ test('can seek to start/length within one blob, one block', async t => {
 })
 
 test('can seek to start/length within one blob, multiple blocks', async t => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core, { blockSize: 10 })
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core, { blockSize: 10 })
 
   const buf = b4a.concat([b4a.alloc(10, 'a'), b4a.alloc(10, 'b')])
   const id = await blobs.put(buf)
@@ -60,8 +60,8 @@ test('can seek to start/length within one blob, multiple blocks', async t => {
 })
 
 test('can seek to start/length within one blob, multiple blocks, multiple blobs', async t => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core, { blockSize: 10 })
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core, { blockSize: 10 })
 
   {
     const buf = b4a.alloc(5 * blobs.blockSize, 'abcdefg')
@@ -79,8 +79,8 @@ test('can seek to start/length within one blob, multiple blocks, multiple blobs'
 })
 
 test('can seek to start/end within one blob', async t => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
 
   const buf = b4a.alloc(5 * blobs.blockSize, 'abcdefg')
   const id = await blobs.put(buf)
@@ -90,8 +90,8 @@ test('can seek to start/end within one blob', async t => {
 })
 
 test('basic seek', async t => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
 
   const buf = b4a.alloc(5 * blobs.blockSize, 'abcdefg')
   const id = await blobs.put(buf)
@@ -102,9 +102,9 @@ test('basic seek', async t => {
 })
 
 test('can pass in a custom core', async t => {
-  const core1 = new Hypercore(RAM)
-  const core2 = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core1)
+  const core1 = new Spacecore(RAM)
+  const core2 = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core1)
   await core1.ready()
 
   const buf = b4a.alloc(5 * blobs.blockSize, 'abcdefg')
@@ -118,8 +118,8 @@ test('can pass in a custom core', async t => {
 test('two write streams does not deadlock', async t => {
   t.plan(2)
 
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
   await core.ready()
 
   const ws = blobs.createWriteStream()
@@ -139,8 +139,8 @@ test('two write streams does not deadlock', async t => {
 test('append error does not deadlock', async t => {
   t.plan(2)
 
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
   await core.ready()
 
   const ws = blobs.createWriteStream()
@@ -157,7 +157,7 @@ test('append error does not deadlock', async t => {
   ws.on('close', () => t.pass('ws closed'))
 
   ws.on('close', function () {
-    const core2 = new Hypercore(RAM)
+    const core2 = new Spacecore(RAM)
     const ws2 = blobs.createWriteStream({ core: core2 })
     ws2.write(b4a.from('hello'))
     ws2.end()
@@ -166,8 +166,8 @@ test('append error does not deadlock', async t => {
 })
 
 test('can put/get a blob and clear it', async t => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
 
   const buf = b4a.alloc(5 * blobs.blockSize, 'abcdefg')
   const id = await blobs.put(buf)
@@ -186,7 +186,7 @@ test('get with timeout', async function (t) {
   t.plan(1)
 
   const [, b] = await createPair()
-  const blobs = new Hyperblobs(b)
+  const blobs = new Spaceblobs(b)
 
   try {
     const id = { byteOffset: 5, blockOffset: 1, blockLength: 1, byteLength: 5 }
@@ -201,7 +201,7 @@ test('seek with timeout', async function (t) {
   t.plan(1)
 
   const [, b] = await createPair()
-  const blobs = new Hyperblobs(b)
+  const blobs = new Spaceblobs(b)
 
   try {
     const id = { byteOffset: 5, blockOffset: 1, blockLength: 1, byteLength: 5 }
@@ -216,7 +216,7 @@ test('get without waiting', async function (t) {
   t.plan(1)
 
   const [, b] = await createPair()
-  const blobs = new Hyperblobs(b)
+  const blobs = new Spaceblobs(b)
 
   const id = { byteOffset: 5, blockOffset: 1, blockLength: 1, byteLength: 5 }
   const blob = await blobs.get(id, { wait: false })
@@ -227,7 +227,7 @@ test('seek without waiting', async function (t) {
   t.plan(1)
 
   const [, b] = await createPair()
-  const blobs = new Hyperblobs(b)
+  const blobs = new Spaceblobs(b)
 
   const id = { byteOffset: 5, blockOffset: 1, blockLength: 1, byteLength: 5 }
   const blob = await blobs.get(id, { start: 100, wait: false })
@@ -238,7 +238,7 @@ test('read stream with timeout', async function (t) {
   t.plan(1)
 
   const [, b] = await createPair()
-  const blobs = new Hyperblobs(b)
+  const blobs = new Spaceblobs(b)
 
   const id = { byteOffset: 5, blockOffset: 1, blockLength: 1, byteLength: 5 }
 
@@ -255,7 +255,7 @@ test('read stream without waiting', async function (t) {
   t.plan(1)
 
   const [, b] = await createPair()
-  const blobs = new Hyperblobs(b)
+  const blobs = new Spaceblobs(b)
 
   const id = { byteOffset: 5, blockOffset: 1, blockLength: 1, byteLength: 5 }
 
@@ -272,7 +272,7 @@ test('seek stream without waiting', async function (t) {
   t.plan(1)
 
   const [, b] = await createPair()
-  const blobs = new Hyperblobs(b)
+  const blobs = new Spaceblobs(b)
 
   const id = { byteOffset: 5, blockOffset: 1, blockLength: 1, byteLength: 5 }
 
@@ -288,8 +288,8 @@ test('seek stream without waiting', async function (t) {
 test('clear with diff option', async function (t) {
   t.plan(3)
 
-  const core = new Hypercore(() => new RAM({ pageSize: 128 }))
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(() => new RAM({ pageSize: 128 }))
+  const blobs = new Spaceblobs(core)
 
   const buf = b4a.alloc(128)
   const id = await blobs.put(buf)
@@ -309,8 +309,8 @@ test('upload/download can be monitored', async (t) => {
   t.plan(30)
 
   const [a, b] = await createPair()
-  const blobsA = new Hyperblobs(a)
-  const blobsB = new Hyperblobs(b)
+  const blobsA = new Spaceblobs(a)
+  const blobsB = new Spaceblobs(b)
 
   const bytes = 1024 * 100 // big enough to trigger more than one update event
   const buf = Buffer.alloc(bytes, '0')
@@ -364,8 +364,8 @@ test('upload/download can be monitored', async (t) => {
 })
 
 test('monitor is removed from the Set on close', async (t) => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
 
   const bytes = 1024 * 100 // big enough to trigger more than one update event
   const buf = Buffer.alloc(bytes, '0')
@@ -377,8 +377,8 @@ test('monitor is removed from the Set on close', async (t) => {
 })
 
 test('basic batch', async (t) => {
-  const core = new Hypercore(RAM)
-  const blobs = new Hyperblobs(core)
+  const core = new Spacecore(RAM)
+  const blobs = new Spaceblobs(core)
   const batch = blobs.batch()
 
   {
@@ -397,10 +397,10 @@ test('basic batch', async (t) => {
 })
 
 async function createPair () {
-  const a = new Hypercore(RAM)
+  const a = new Spacecore(RAM)
   await a.ready()
 
-  const b = new Hypercore(RAM, a.key)
+  const b = new Spacecore(RAM, a.key)
   await b.ready()
 
   replicate(a, b)
